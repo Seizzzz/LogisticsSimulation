@@ -1,0 +1,27 @@
+struct data
+{
+	int StartTime;
+	struct Point Shop;
+	struct Point Custom;
+}
+
+struct Point
+{
+	int x;
+	int y;
+};
+
+inline void Cal_Distance(struct Point A,struct Point B)
+{
+	;
+}
+
+void Cal_ShortestDistance(struct Point Start,struct Point* Map,int Quantity)
+
+
+struct Point* Ret_Map(int Range,int TimeLeft)
+{
+	struct Point* Map=new Map[];
+	
+	return Map;
+}

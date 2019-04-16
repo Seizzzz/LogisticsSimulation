@@ -1,8 +1,12 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 #define MaxOrder 999
+#define MapSize 18
+#define MaxBurden 5
 #define INF 0x7fffffff
-#define InputFileName sales.txt
-#define OutputFileName output.txt
+#define InputFileName "sales.txt"
+#define OutputFileName "output.txt"
 using namespace std;
 
 struct Point
@@ -26,6 +30,7 @@ ifstream infile(InputFileName);
 ofstream outfile(OutputFileName);
 
 int _Map[18][18]; //[0~17][0~17]
+int Distance[10][10];
 int _Money = 0; //总钱数
 int _MotorQuantity = 0; //骑手数量
 int _TotalOrder = 0; //总订单数
@@ -59,7 +64,7 @@ void Cal_ShortestDistance_DFS(int now, int which, int have, int need, bool* vis,
 int Cal_ShortestDistance(Point * ToSearch, int Quantity)
 {
 	int ans = INF;
-	bool vis[Quantity + 1];
+	bool vis[MaxBurden];
 	for (int i = 0; i <= Quantity; i++) vis[i] = true;
 
 	for (int i = 1; i <= Quantity; i++)
@@ -72,7 +77,7 @@ int Cal_ShortestDistance(Point * ToSearch, int Quantity)
 	return ans;
 }
 
-int cmp_ByOrderTime(Data A, Data B)
+inline bool cmp_ByOrderTime(const Data A, const Data B)
 {
 	return A.OrderTime < B.OrderTime;
 }
@@ -95,14 +100,14 @@ int main()
 {
 	std::ios::sync_with_stdio(false);
 
-	while (ifstream >> TimeTable[_TotalOrder].Number) //输入
+	while (infile >> TimeTable[_TotalOrder].Number) //输入
 	{
 		_TotalOrder++;
-		ifstream >> TimeTable[_TotalOrder].OrderTime
+		infile >> TimeTable[_TotalOrder].OrderTime
 				>> TimeTable[_TotalOrder].Restaurant_x >> TimeTable[_TotalOrder].Restaurant_y
 				>> TimeTable[_TotalOrder].Customer_x >> TimeTable[_TotalOrder].Customer_y;
 	}
-	sort(TimeTable, _TotalOrder, cmp_ByOrderTime);
+	sort(TimeTable, TimeTable + _TotalOrder, cmp_ByOrderTime);
 
 	while (_Money >= 0)
 	{

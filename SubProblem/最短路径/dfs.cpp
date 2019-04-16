@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#define MaxOrder 999
+#define MapSize 18
 #define INF 0x7fffffff
 using namespace std;
 
@@ -39,7 +41,7 @@ void Cal_ShortestDistance_DFS(int now, int which, int have, int need, bool* vis,
 int Cal_ShortestDistance(Point* ToSearch,int Quantity)
 {
 	int ans = INF;
-	bool vis[Quantity+1];
+	bool vis[MapSize];
 	for (int i = 0; i <= Quantity; i++) vis[i] = true;
 
 	for (int i = 1; i <= Quantity; i++)
@@ -57,7 +59,7 @@ void example()
 	int n;
 	cin >> n;
 
-	Point ToSearch[n+1];
+	Point ToSearch[MaxOrder];
 	ToSearch[0].number = 0;
 	ToSearch[0].x = 0;
 	ToSearch[0].y = 0;

@@ -52,7 +52,7 @@ void Output()
 
 void init()
 {
-	while (infile >> TimeTable[++_TotalOrder].Number) //ÊäÈë
+	while (infile >> TimeTable[_TotalOrder++].Number) //ÊäÈë
 	{
 		infile >> TimeTable[_TotalOrder].OrderTime
 			>> TimeTable[_TotalOrder].Restaurant_x >> TimeTable[_TotalOrder].Restaurant_y

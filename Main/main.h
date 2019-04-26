@@ -5,7 +5,7 @@
 #include <fstream>
 //#include <queue>
 #include <algorithm>
-#include "dfspath.h"
+#include "dfspath_v2.h"
 #define MaxOrder 999
 #define MapSize 18
 #define MaxBurden 5

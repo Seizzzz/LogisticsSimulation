@@ -1,11 +1,8 @@
 #ifndef DFSPATH_H
 #define DFSPATH_H
 
-#define MaxOrder 999
+#include "main.h"
 #define MaxBurden 5
-#define MapSize 18
-#define INF 0x7fffffff
-
 
 int Distance[10][10];
 struct Point
@@ -16,6 +13,7 @@ struct Point
 	int x;
 	int y;
 };
+Point Pathtmp[2*MaxBurden];
 Point Path[2*MaxBurden];
 
 inline int Cal_Distance(Point A, Point B);

@@ -14,9 +14,10 @@ inline int Cal_Distance(Point A, Point B)
 int Cal_ShortestDistance_DFS(int now, int which, int have, int need, bool* vis, int& ans, Point* ToSearch)
 {
 	if (now >= ans) return which;
-	//Path[have]=ToSearch[which];
+	Pathtmp[have]=ToSearch[which];
 	if (have == need)
 	{
+		for(int i=0;i<=need;i++) Path[i]=Pathtmp[i];
 		ans = now;
 		return which;
 	}
@@ -58,6 +59,8 @@ int Cal_ShortestDistance(Point* ToSearch,int Quantity) //Quantity not conclude s
 			Distance[i][i] = 0;
 		}
 	}
+	
+	Path[0]=ToSearch[0];
 	
 	for (int i = 1; i <= Quantity; i++)
 	{

@@ -1,0 +1,6 @@
+Point Move_motor(Point st, Point ed)
+{
+	Point next;
+	...
+	return next;
+}

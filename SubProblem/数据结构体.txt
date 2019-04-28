@@ -1,0 +1,9 @@
+struct Data
+{
+	int Number;
+	int OrderTime;
+	int Restaurant_x;
+	int Restaurant_y;
+	int Customer_x;
+	int Customer_y;
+}TimeTable[MaxOrder];

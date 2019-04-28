@@ -1,0 +1,9 @@
+struct Motor
+{
+	int number;
+	bool enable;
+	int x;
+	int y;
+	int time;
+	queue<Point> Map;
+}MotorArray[MaxMotor];

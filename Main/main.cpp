@@ -78,20 +78,23 @@ void init();
 void update_Motor();
 void purchase_Motor();
 void deal_DataStack();
-void judge_Overtime();
+bool judge_Overtime();
 int exist_Motor();
-Point move_Motor();
+int cal_Distance(const Point& A, const Point& B);
+Point move_Motor(Motor& who, Point st, Point ed);
 
 int main()
 {
 	std::ios::sync_with_stdio(false);
 	init();
 	
+	/*
 	while(!DataStack.empty())
 	{
 		outfile << DataStack.top() << endl;
 		DataStack.pop();
 	}
+	*/
 	
 	while (_Money >= 0)
 	{
@@ -99,7 +102,7 @@ int main()
 		
 		while(_Time >= DataStack.top().OrderTime) //当前时间及前 还有未处理的订单
 		{
-			if(!exist_Motor()) //如果不存在骑手 
+			if(exist_Motor() == -1) //如果不存在骑手 
 			{
 				if(_Money >= MotorPrice) purchase_Motor();
 				else break;
@@ -107,7 +110,12 @@ int main()
 			else deal_DataStack(); //如果存在骑手 则分配订单 
 		} 
 		
-		judge_Overtime();
+		if (judge_Overtime())
+		{
+			DataStack.pop();
+			exit(1); //return 1 吊销营业执照
+		}
+		
 		
 		output();
 		_Time++;
@@ -117,9 +125,10 @@ int main()
 }
 
 ///******///
-void judge_Overtime() //todo
+bool judge_Overtime() //todo
 {
-	if(_Time > DataStack.top().OrderTime + 3);
+	if(_Time > DataStack.top().OrderTime + 3) return true;
+	return false;
 }
 
 int exist_Motor() //completed
@@ -150,7 +159,8 @@ Point move_Motor(Motor& who, Point st, Point ed) //todo
 	
 	who.Position = next;
 	return;
-	*/;
+	*/
+	return initPoint;
 }
 
 void update_Motor() //completed
@@ -177,9 +187,17 @@ void update_Motor() //completed
 	return;
 }
 
-void dfs_Path(Motor& ex, vector<Point>& Res, vector<Point>& Cus)
+int cal_Distance(const Point& A, const Point& B) //todo
 {
-	
+	//not exact value
+	//return ...
+	return 0;
+}
+
+void dfs_Path(Motor& ex, vector<Point>& Res, vector<Point>& Cus) //todo
+{
+	vector<bool> visRes;
+
 	
 	
 }
@@ -200,7 +218,7 @@ bool able_Order(Motor& ex, stack<Point>& inRes, stack<Point>& inCus) //todo
 	while(!inCus.empty())
 	{
 		Cus.push_back(inCus.top());
-		sv_Ces.push(inCus.top());
+		sv_Cus.push(inCus.top());
 		inCus.pop();
 	}
 	
@@ -213,11 +231,13 @@ bool able_Order(Motor& ex, stack<Point>& inRes, stack<Point>& inCus) //todo
 	}
 	while(!sv_Cus.empty())
 	{
-		Cus.push(sv_Cus.top());
+		inCus.push(sv_Cus.top());
 		sv_Cus.pop();
 	}
 	
-	return;
+	if (!ex.Map.empty()) return true;
+	//else
+	return false;
 } 
 
 void merge_Order(Motor& ex)
@@ -253,6 +273,7 @@ void deal_DataStack() //completed
 
 void purchase_Motor() //completed
 {	
+	_Money -= MotorPrice;
 	MotorVector[_MotorQuantity].enable=true;
 	MotorVector[_MotorQuantity].Position=initPoint;
 	_MotorQuantity++;

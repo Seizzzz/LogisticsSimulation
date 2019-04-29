@@ -81,7 +81,7 @@ void deal_DataStack();
 bool judge_Overtime();
 int exist_Motor();
 int cal_Distance(const Point& A, const Point& B);
-Point move_Motor(Motor& who, Point st, Point ed);
+void move_Motor(Motor& who);
 
 int main()
 {
@@ -142,7 +142,7 @@ int exist_Motor() //completed
 	return -1; //未找到 
 }
 
-Point move_Motor(Motor& who, Point st, Point ed) //todo
+void move_Motor(Motor& who) //todo
 {
 	/*
 	Point next;
@@ -160,10 +160,10 @@ Point move_Motor(Motor& who, Point st, Point ed) //todo
 	who.Position = next;
 	return;
 	*/
-	return initPoint;
+	return;
 }
 
-void update_Motor() //completed
+void update_Motor() //todo  需要添加数量等更新 
 {
 	/*
 	每秒执行一次

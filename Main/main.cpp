@@ -8,6 +8,7 @@ struct Point
 {
 	int x;
 	int y;
+	bool isRes;
 }; //地图点 
 struct Data
 {
@@ -81,6 +82,7 @@ void deal_DataStack();
 bool judge_Overtime();
 int exist_Motor();
 int cal_Distance(const Point& A, const Point& B);
+void search_Path(Motor& ex, vector<Point>& Res, vector<Point>& Cus);
 void move_Motor(Motor& who);
 
 int main()
@@ -189,76 +191,81 @@ void update_Motor() //todo  需要添加数量等更新
 
 int cal_Distance(const Point& A, const Point& B) //todo
 {
-	//not exact value
-	//return ...
-	return 0;
+	return ((A.x - B.x) >> 1) + ((A.y - B.y) >> 1);
 }
 
-void dfs_Path(Motor& ex, vector<Point>& Res, vector<Point>& Cus) //todo
+vector<Point> sv_Path;
+vector<Point> sv_Path_Min;
+int sv_Dis_Min = INF;
+
+void dfs_Path(int have, int need, vector<bool> visRes, int dis) //已有点个数 需要点个数 访问数组 现在路程
 {
-	vector<bool> visRes;
+	if (dis >= sv_Dis_Min) return;
+	if (have == need)
+	{
+		sv_Dis_Min = dis;
+		sv_Path_Min.assign(sv_Path.begin(), sv_Path.end());
+	}
+
+	for(int i=)
+
+}
+
+void search_Path(Motor& ex, vector<Point>& nowOrder) //todo
+{
+	vector<bool> visRes(nowOrder.size() , true); //创建一个size大小的true数组 用于保存是否之前访问过对应的商家
+	vector<Point> sv; //保存
+	dfs_Path(0, nowOrder.size(), visRes, 0);
 
 	
 	
 }
 
-bool able_Order(Motor& ex, stack<Point>& inRes, stack<Point>& inCus) //todo
+bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 {
-	vector<Point> Res;
-	vector<Point> Cus;
-	stack<Point> sv_Res;
-	stack<Point> sv_Cus;
-	
-	while(!inRes.empty())
+	vector<Point> nowOrder_vec; //传入dfs的结构体数组
+	stack<Point> sv_nowOrder; //保存传入的order栈
+	int sv_Map_size = ex.Map.size;
+
+	while (!nowOrder.empty()) //将stack转化为vector 方便操作
 	{
-		Res.push_back(inRes.top());
-		sv_Res.push(inRes.top());
-		inRes.pop(); 
-	}
-	while(!inCus.empty())
-	{
-		Cus.push_back(inCus.top());
-		sv_Cus.push(inCus.top());
-		inCus.pop();
+		nowOrder_vec.push_back(nowOrder.top());
+		sv_nowOrder.push(nowOrder.top());
+		nowOrder.pop();
 	}
 	
-	dfs_Path(ex,Res,Cus);
-	
-	while(!sv_Res.empty())
+	search_Path(ex, nowOrder_vec); //准备分配
+
+	while (!sv_nowOrder.empty()) //将stack内容还愿
 	{
-		inRes.push(sv_Res.top());
-		sv_Res.pop(); 
-	}
-	while(!sv_Cus.empty())
-	{
-		inCus.push(sv_Cus.top());
-		sv_Cus.pop();
+		nowOrder.push(sv_nowOrder.top());
+		sv_nowOrder.pop();
 	}
 	
-	if (!ex.Map.empty()) return true;
+	if (ex.Map.size() > sv_Map_size) return true; //如果分配后该骑手Map增大 即分配成功
 	//else
 	return false;
 } 
 
 void merge_Order(Motor& ex)
 {
-	stack<Point> nowOrder_Restaurant; //保存要去的店家位置 
-	stack<Point> nowOrder_Customer; //保存要去的顾客位置 
-	
+	stack<Point> nowOrder; //保存要去的店家和顾客的位置 
 	stack<Data> sv; //保存输入数据 失败时push回 
 	
-	while(true) //不断判断是否能添加新的订单 
+	while (true) //不断判断是否能添加新的订单 
 	{	
 		sv.push(DataStack.top());
-		nowOrder_Restaurant.push(DataStack.top().Restaurant);
-		nowOrder_Customer.push(DataStack.top().Customer);
+		nowOrder.push(DataStack.top().Restaurant);
+		nowOrder.top().isRes = true;
+		nowOrder.push(DataStack.top().Customer);
+		nowOrder.top().isRes = false;
 		DataStack.pop();
 		
-		if(able_Order(ex,nowOrder_Restaurant,nowOrder_Customer));
+		if (able_Order(ex, nowOrder)) continue;
 		else
 		{
-			DataStack.push(sv.top());
-			break;
+			DataStack.push(sv.top()); //还原上一个pop的元素
+			break; //下接return
 		} 
 	}
 	return;

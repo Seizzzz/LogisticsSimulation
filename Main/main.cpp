@@ -33,6 +33,7 @@ vector<Motor> MotorVector(MaxMotor);
 ostream& operator << (ostream& out, const Motor& ex)
 {
 	out << "第" << ex.number << "位骑手的位置: "
+		//<< "(" << (ex.Position.x >> 1) << "," << (ex.Position.y >> 1) << ")";
 		<< "(" << ex.Position.x << "," << ex.Position.y << ")";
 	return out;
 }
@@ -102,6 +103,7 @@ int main()
 	
 	while (_Money >= 0) //当 
 	{
+		if(_Time > TimeMaximum) exit(0); //超出时间上限时终止 //todo 
 		if(DataStack.empty() && !judge_MotorMoving()) break;
 		update_Motor();
 		
@@ -179,9 +181,9 @@ void move_Motor(Motor& who) //completed
 			who.Position.y += j;
 		}
 		else if (abs(who.Map.top().x - who.Position.x) == 1) //行方向上到位
-			who.Position.y += j;
+			who.Position.y += 2*j;
 		else if (abs(who.Map.top().y - who.Position.y) == 1) //列方向上到位
-			who.Position.x += i;
+			who.Position.x += 2*i;
 	}
 
 	return;
@@ -307,6 +309,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 		sv_nowOrder.pop();
 	}
 	
+	reverse_Stack(ex.Map); //将倒序点反转 
 	if (ex.Map.size() > sv_Map_size) return true; //如果分配后该骑手Map增大 即分配成功
 	//else
 	return false;
@@ -320,23 +323,30 @@ void merge_Order(Motor& ex)
 	
 	while (!DataStack.empty()) //不断判断是否能添加新的订单 
 	{	
-		sv.push(DataStack.top());
-		nowOrder.push(DataStack.top().Restaurant);
-		nowOrder.top().isRes = true;
-		nowOrder.push(DataStack.top().Customer);
-		nowOrder.top().isRes = false;
-		DataStack.pop();
-		
-		if (able_Order(ex, nowOrder))
+		if(DataStack.top().OrderTime <= _Time + PreMergeTime)
 		{
-			quantity++;
-			continue;
+			sv.push(DataStack.top());
+			nowOrder.push(DataStack.top().Restaurant);
+			nowOrder.top().isRes = true;
+			nowOrder.top().deadline = INF;
+			nowOrder.push(DataStack.top().Customer);
+			nowOrder.top().isRes = false;
+			nowOrder.top().deadline = DataStack.top().OrderTime + LimitTime;
+			
+			DataStack.pop();
+			
+			if (able_Order(ex, nowOrder))
+			{
+				quantity++;
+				continue;
+			}
+			else
+			{
+				DataStack.push(sv.top()); //还原上一个pop的元素
+				break; //下接return
+			} 
 		}
-		else
-		{
-			DataStack.push(sv.top()); //还原上一个pop的元素
-			break; //下接return
-		} 
+		else break;
 	}
 	
 	_GetOrder += quantity;
@@ -353,14 +363,16 @@ void deal_DataStack() //completed
 void purchase_Motor() //completed
 {	
 	_Money -= MotorPrice;
-	MotorVector[_MotorQuantity].enable=true;
-	MotorVector[_MotorQuantity].Position=initPoint;
+	MotorVector[_MotorQuantity].number = _MotorQuantity;
+	MotorVector[_MotorQuantity].enable = true;
+	MotorVector[_MotorQuantity].Position = initPoint;
 	_MotorQuantity++;
 	return;
 }
 
 void output() //completed
 {
+	outfile << "时间: " << _Time << endl;
 	outfile << "当前账户金额数: " << _Money << endl;
 	for (int i = 0; i < _MotorQuantity; i++)
 		outfile << MotorVector[i] << endl;
@@ -395,12 +407,8 @@ void init() //todo
 	
 	initPoint.x /= _TotalOrder;
 	initPoint.y /= _TotalOrder;
-	initPoint.x = (initPoint.x % 2) ? 
-						initPoint.x : (initPoint.x < (MapSize >> 1)) ?
-													  initPoint.x + 1:initPoint.x - 1;
-	initPoint.y = (initPoint.y % 2) ? 
-						initPoint.y : (initPoint.y < (MapSize >> 1)) ?
-													  initPoint.y + 1:initPoint.y - 1;
+	if(initPoint.x % 2){ if(initPoint.y % 2) initPoint.x++; } //x,y同为奇数 
+	else{ if(initPoint.y % 2 == 0) initPoint.y++; } //x,y同为偶数 
 	
 	reverse_Stack(DataStack);
 	return;

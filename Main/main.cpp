@@ -92,18 +92,10 @@ int main()
 {
 	std::ios::sync_with_stdio(false);
 	init();
-	
-	/*
-	while(!DataStack.empty())
-	{
-		outfile << DataStack.top() << endl;
-		DataStack.pop();
-	}
-	*/
-	
+
 	while (_Money >= 0) //当 
 	{
-		if(_Time > TimeMaximum) exit(0); //超出时间上限时终止 //todo 
+		if(_CompleteOrder + _OverTimeOrder == _TotalOrder) exit(0);
 		if(DataStack.empty() && !judge_MotorMoving()) break;
 		update_Motor();
 		
@@ -122,7 +114,6 @@ int main()
 			DataStack.pop();
 			exit(1); //return 1 吊销营业执照
 		}
-		
 		
 		output();
 		_Time++;
@@ -191,6 +182,16 @@ void move_Motor(Motor& who) //completed
 
 bool judge_Arrive(Motor& ex) //completed
 {
+	if(ex.Map.size() == 1 && ex.Map.top() == initPoint) //因初始点不在店家类位置 此处需单独操作判断 
+	{
+		if(abs(ex.Position.x - initPoint.x) == 1 && abs(ex.Position.y - initPoint.y) == 1)
+		{
+			ex.Position = initPoint; //回到初始点 
+			return true;
+		}
+		return false;
+	} 
+	
 	if(ex.Map.top().x == ex.Position.x)
 	{
 		if(abs(ex.Map.top().y - ex.Position.y) == 1) return true; //在同行 且列坐标差为1 即在左右 
@@ -218,6 +219,11 @@ void update_Motor() //todo  需要添加数量等更新
 		{
 			if(judge_Arrive(MotorVector[i])) //如果在过程点附近
 			{
+				if(MotorVector[i].Map.top() == initPoint && MotorVector[i].Position == initPoint && MotorVector[i].Map.size() == 1)
+				{
+					MotorVector[i].Map.pop();
+					continue;
+				}
 				if(!MotorVector[i].Map.top().isRes) //如果完成的点是顾客 
 				{
 					if(MotorVector[i].Map.top().deadline >= _Time) //及时赶到

@@ -8,7 +8,8 @@ struct Point
 {
 	int x;
 	int y;
-	bool isRes;
+	int deadline; //×îÍíµ½´ïÊ±¼ä 
+	bool isRes; //ÊÇ·ñÊÇÉÌ¼Ò 
 }; //µØÍ¼µã 
 struct Data
 {
@@ -27,7 +28,7 @@ struct Motor
 
 Point initPoint;
 stack<Data> DataStack;
-vector<Motor> MotorVector;
+vector<Motor> MotorVector(MaxMotor);
 
 ostream& operator << (ostream& out, const Motor& ex)
 {
@@ -80,6 +81,7 @@ void update_Motor();
 void purchase_Motor();
 void deal_DataStack();
 bool judge_Overtime();
+bool judge_MotorMoving();
 int exist_Motor();
 int cal_Distance(const Point& A, const Point& B);
 void search_Path(Motor& ex, vector<Point>& Res, vector<Point>& Cus);
@@ -98,13 +100,14 @@ int main()
 	}
 	*/
 	
-	while (_Money >= 0)
+	while (_Money >= 0) //µ± 
 	{
+		if(DataStack.empty() && !judge_MotorMoving()) break;
 		update_Motor();
 		
-		while(_Time >= DataStack.top().OrderTime) //µ±Ç°Ê±¼ä¼°Ç° »¹ÓĞÎ´´¦ÀíµÄ¶©µ¥
+		while(!DataStack.empty() && _Time >= DataStack.top().OrderTime) //µ±Ç°Ê±¼ä¼°Ç° »¹ÓĞÎ´´¦ÀíµÄ¶©µ¥
 		{
-			if(exist_Motor() == -1) //Èç¹û²»´æÔÚÆïÊÖ 
+			if(exist_Motor() == -1) //Èç¹û²»´æÔÚ¿ÉÓÃÆïÊÖ 
 			{
 				if(_Money >= MotorPrice) purchase_Motor();
 				else break;
@@ -112,7 +115,7 @@ int main()
 			else deal_DataStack(); //Èç¹û´æÔÚÆïÊÖ Ôò·ÖÅä¶©µ¥ 
 		} 
 		
-		if (judge_Overtime())
+		if (!DataStack.empty() && judge_Overtime())
 		{
 			DataStack.pop();
 			exit(1); //return 1 µõÏúÓªÒµÖ´ÕÕ
@@ -127,6 +130,15 @@ int main()
 }
 
 ///******///
+bool judge_MotorMoving()
+{
+	for(int i = 0; i < _MotorQuantity; i++)
+	{
+		if(!MotorVector[i].Map.empty()) return true;
+	}
+	return false;
+}
+
 bool judge_Overtime() //todo
 {
 	if(_Time > DataStack.top().OrderTime + 3) return true;
@@ -144,26 +156,49 @@ int exist_Motor() //completed
 	return -1; //Î´ÕÒµ½ 
 }
 
-void move_Motor(Motor& who) //todo
+void move_Motor(Motor& who) //completed
 {
-	/*
-	Point next;
-	...
-	return next;
-	
-	Point next = who.Position;
-	if(who.Position.x == who.Map.top().x + 1 || who.Position.x == who.Map.top().x - 1) //Èç¹ûĞĞ·½ÏòÉÏ ÆïÊÖÒÑµ½Î» 
+	int i = (who.Map.top().x - who.Position.x > 0) ? 1 : -1,
+		j = (who.Map.top().y - who.Position.y > 0) ? 1 : -1;
+
+	if (who.Map.top().x == who.Position.x)
 	{
-		if(who.Position.x < who.Map.top().x + 2) next.x += 2;
-		else if(who.Position.x < who.Map.top().x - 2) next.x -= 2;
-		else next.x
-	}// emmmÓĞµãĞ¡ÎÊÌâ 
-	
-	who.Position = next;
-	return;
-	*/
+		who.Position.x++; //Í¬ĞĞ »»µ½ÁíÒ»ĞĞ
+		who.Position.y += j;
+	}
+	else if (who.Map.top().y == who.Position.y)
+	{
+		who.Position.y++; //Í¬ÁĞ »»µ½ÁíÒ»ÁĞ
+		who.Position.x += i;
+	}
+	else
+	{
+		if (abs(who.Map.top().x - who.Position.x) > 1 && abs(who.Map.top().y - who.Position.y) > 1) //Æ½·²Î»ÖÃ
+		{
+			who.Position.x += i;
+			who.Position.y += j;
+		}
+		else if (abs(who.Map.top().x - who.Position.x) == 1) //ĞĞ·½ÏòÉÏµ½Î»
+			who.Position.y += j;
+		else if (abs(who.Map.top().y - who.Position.y) == 1) //ÁĞ·½ÏòÉÏµ½Î»
+			who.Position.x += i;
+	}
+
 	return;
 }
+
+bool judge_Arrive(Motor& ex) //completed
+{
+	if(ex.Map.top().x == ex.Position.x)
+	{
+		if(abs(ex.Map.top().y - ex.Position.y) == 1) return true; //ÔÚÍ¬ĞĞ ÇÒÁĞ×ø±ê²îÎª1 ¼´ÔÚ×óÓÒ 
+	}
+	else if(ex.Map.top().y == ex.Position.y)
+	{
+		if(abs(ex.Map.top().x - ex.Position.x) == 1) return true; //ÔÚÍ¬ÁĞ ÇÒĞĞ×ø±ê²îÎª1 ¼´ÔÚÉÏÏÂ 
+	}
+	return false; 
+} 
 
 void update_Motor() //todo  ĞèÒªÌí¼ÓÊıÁ¿µÈ¸üĞÂ 
 {
@@ -179,9 +214,24 @@ void update_Motor() //todo  ĞèÒªÌí¼ÓÊıÁ¿µÈ¸üĞÂ
 	{
 		if(!MotorVector[i].Map.empty()) //µ±Ç°ÕıÔÚĞĞ½ø 
 		{
-			if(abs(MotorVector[i].Position.x - MotorVector[i].Map.top().x) <= 1 &&
-			   abs(MotorVector[i].Position.y - MotorVector[i].Map.top().y) <= 1) MotorVector[i].Map.pop(); //Èç¹ûÔÚ¹ı³Ìµã¸½½ü 
-			else move_Motor(MotorVector[i], MotorVector[i].Position, MotorVector[i].Map.top()); //ÔÚ¹ı³ÌÖĞ ¸üĞÂÎ»ÖÃ 
+			if(judge_Arrive(MotorVector[i])) //Èç¹ûÔÚ¹ı³Ìµã¸½½ü
+			{
+				if(!MotorVector[i].Map.top().isRes) //Èç¹ûÍê³ÉµÄµãÊÇ¹Ë¿Í 
+				{
+					if(MotorVector[i].Map.top().deadline >= _Time) //¼°Ê±¸Ïµ½
+					{
+						_Money += Profit;
+						_CompleteOrder++;
+					} 
+					else
+					{
+						_Money -= Punish;
+						_OverTimeOrder++;
+					}
+				} 
+		   		MotorVector[i].Map.pop();
+			} 
+			else move_Motor(MotorVector[i]); //ÔÚ¹ı³ÌÖĞ ¸üĞÂÎ»ÖÃ 
 		}
 		else if(MotorVector[i].Position != initPoint) MotorVector[i].Map.push(initPoint); //ÎŞÄ¿±ê µ«²»ÔÚÆğµã 
 		//else ÎŞÄ¿±ê ÇÒÔÚÆğµã ºöÂÔ 
@@ -194,8 +244,8 @@ int cal_Distance(const Point& A, const Point& B) //todo
 	return ((A.x - B.x) >> 1) + ((A.y - B.y) >> 1);
 }
 
-vector<Point> sv_Path;
-vector<Point> sv_Path_Min;
+vector<Point> sv_Path(MaxBurden);
+vector<Point> sv_Path_Min(MaxBurden);
 int sv_Dis_Min = INF;
 
 void dfs_Path(int have, int need, vector<bool> visRes, int dis) //ÒÑÓĞµã¸öÊı ĞèÒªµã¸öÊı ·ÃÎÊÊı×é ÏÖÔÚÂ·³Ì
@@ -207,25 +257,40 @@ void dfs_Path(int have, int need, vector<bool> visRes, int dis) //ÒÑÓĞµã¸öÊı ĞèÒ
 		sv_Path_Min.assign(sv_Path.begin(), sv_Path.end());
 	}
 
-	for(int i=)
-
+	//for(int i=)
+	return;
 }
 
 void search_Path(Motor& ex, vector<Point>& nowOrder) //todo
 {
 	vector<bool> visRes(nowOrder.size() , true); //´´½¨Ò»¸ösize´óĞ¡µÄtrueÊı×é ÓÃÓÚ±£´æÊÇ·ñÖ®Ç°·ÃÎÊ¹ı¶ÔÓ¦µÄÉÌ¼Ò
-	vector<Point> sv; //±£´æ
-	dfs_Path(0, nowOrder.size(), visRes, 0);
+	//vector<Point> sv;
+	//dfs_Path(0, nowOrder.size(), visRes, 0);
 
+	/*
+	´Ë´¦dfsÎ´Íê³É ÏÈÖ±½Ó·µ»ØÔ­Ê¼µã ·ÇÓÅ½â
+	*/
+
+	for (int i = 0; i < nowOrder.size(); i++)
+	{
+		sv_Path_Min[i] = nowOrder[i];
+	}
+
+	//
 	
-	
+	for (int i = 0; i < nowOrder.size(); i++)
+	{
+		ex.Map.push(sv_Path_Min[i]);
+	}
+
+	return;
 }
 
 bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 {
 	vector<Point> nowOrder_vec; //´«ÈëdfsµÄ½á¹¹ÌåÊı×é
 	stack<Point> sv_nowOrder; //±£´æ´«ÈëµÄorderÕ»
-	int sv_Map_size = ex.Map.size;
+	int sv_Map_size = ex.Map.size();
 
 	while (!nowOrder.empty()) //½«stack×ª»¯Îªvector ·½±ã²Ù×÷
 	{
@@ -251,8 +316,9 @@ void merge_Order(Motor& ex)
 {
 	stack<Point> nowOrder; //±£´æÒªÈ¥µÄµê¼ÒºÍ¹Ë¿ÍµÄÎ»ÖÃ 
 	stack<Data> sv; //±£´æÊäÈëÊı¾İ Ê§°ÜÊ±push»Ø 
+	int quantity = 0; //¼ÇÂ¼Ìí¼ÓµÄ¶©µ¥ÊıÁ¿ 
 	
-	while (true) //²»¶ÏÅĞ¶ÏÊÇ·ñÄÜÌí¼ÓĞÂµÄ¶©µ¥ 
+	while (!DataStack.empty()) //²»¶ÏÅĞ¶ÏÊÇ·ñÄÜÌí¼ÓĞÂµÄ¶©µ¥ 
 	{	
 		sv.push(DataStack.top());
 		nowOrder.push(DataStack.top().Restaurant);
@@ -261,13 +327,19 @@ void merge_Order(Motor& ex)
 		nowOrder.top().isRes = false;
 		DataStack.pop();
 		
-		if (able_Order(ex, nowOrder)) continue;
+		if (able_Order(ex, nowOrder))
+		{
+			quantity++;
+			continue;
+		}
 		else
 		{
 			DataStack.push(sv.top()); //»¹Ô­ÉÏÒ»¸öpopµÄÔªËØ
 			break; //ÏÂ½Óreturn
 		} 
 	}
+	
+	_GetOrder += quantity;
 	return;
 }
 
@@ -290,7 +362,7 @@ void purchase_Motor() //completed
 void output() //completed
 {
 	outfile << "µ±Ç°ÕË»§½ğ¶îÊı: " << _Money << endl;
-	for (int i = 1; i <= _MotorQuantity; i++)
+	for (int i = 0; i < _MotorQuantity; i++)
 		outfile << MotorVector[i] << endl;
 	outfile << "½Óµ¥Êı: " << _GetOrder << endl;
 	outfile << "Íê³ÉÊı: " << _CompleteOrder << endl;
@@ -303,18 +375,33 @@ void init() //todo
 {
 	//ÊäÈë²¢¼ÆËã³õÊ¼µã 
 	Data tmp;
+	initPoint = Point{0,0};
+	_Money = initMoney;
 	while (infile >> tmp.Number) //ÊäÈë
 	{
 		infile >> tmp.OrderTime
 			   >> tmp.Restaurant.x >> tmp.Restaurant.y
-			   >> tmp.Customer.x >> tmp.Customer.y;
+			   >> tmp.Customer.x   >> tmp.Customer.y;
 		tmp.Restaurant.x <<= 1;
 		tmp.Restaurant.y <<= 1;
 		tmp.Customer.x <<= 1;
 		tmp.Customer.y <<= 1;
 		DataStack.push(tmp);
+		
+		initPoint.x += tmp.Restaurant.x;
+		initPoint.y += tmp.Restaurant.y;
 		_TotalOrder++;
 	}
+	
+	initPoint.x /= _TotalOrder;
+	initPoint.y /= _TotalOrder;
+	initPoint.x = (initPoint.x % 2) ? 
+						initPoint.x : (initPoint.x < (MapSize >> 1)) ?
+													  initPoint.x + 1:initPoint.x - 1;
+	initPoint.y = (initPoint.y % 2) ? 
+						initPoint.y : (initPoint.y < (MapSize >> 1)) ?
+													  initPoint.y + 1:initPoint.y - 1;
+	
 	reverse_Stack(DataStack);
 	return;
 }

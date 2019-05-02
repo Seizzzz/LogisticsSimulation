@@ -14,7 +14,7 @@
 #define Punish 50
 #define TimeMaximum 60
 #define LimitTime 30
-#define PreMergeTime 10 //经验时间 
+#define PreMergeTime 5 //经验时间 
 #define MaxOrder 999
 #define MapSize 17
 #define MaxBurden 10 //即最多五组订单 

@@ -316,8 +316,9 @@ void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder) /
 	return;
 }
 
-void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
+void search_Path(Motor& ex, vector<Point>& nowOrder) //todo
 {
+	int quantity = nowOrder.size();
 	for (int i = quantity + 1; i > 0; i--)
 	{
 		nowOrder[i] = nowOrder[i-1];
@@ -352,7 +353,7 @@ void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
 	while(!ex.Map.empty()) ex.Map.pop();
 	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]);
 	
-	// 
+	
 	for(int i=1;i<=quantity;i++) cout << sv_Path_Min[i] << " ";
 	cout << endl;
 	stack<Point> tmp;
@@ -373,14 +374,14 @@ void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
 		tmp.pop();
 	}
 	cout << endl;
-	//
+	
 	
 	return;
 }
 
 bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 {
-	vector<Point> nowOrder_vec; //传入dfs的结构体数组
+	vector<Point> nowOrder_vec(MaxBurden); //传入dfs的结构体数组
 	stack<Point> sv_nowOrder; //保存传入的order栈
 	int sv_Map_size = ex.Map.size();
 	int quantity=nowOrder.size();
@@ -392,7 +393,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 		nowOrder.pop();
 	}
 	
-	search_Path(ex, nowOrder_vec, quantity); //准备分配
+	search_Path(ex, nowOrder_vec); //准备分配
 
 	while (!sv_nowOrder.empty()) //将stack内容还愿
 	{
@@ -402,6 +403,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 	//reverse_Stack(ex.Map); //将倒序点反转 
 	if (ex.Map.size() > sv_Map_size) return true; //如果分配后该骑手Map增大 即分配成功
 	//else
+	return false;
 } 
 
 void merge_Order(Motor& ex)

@@ -87,6 +87,7 @@ bool judge_Overtime();
 bool judge_MotorMoving();
 int exist_Motor();
 int cal_Distance(const Point& A, const Point& B);
+void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder);
 void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity);
 void move_Motor(Motor& who);
 
@@ -221,7 +222,6 @@ void update_Motor() //todo  需要添加数量等更新
 	setfillcolor(EGERGB(0xFF, 0x0, 0x0));
 	for(int i = 0; i < _MotorQuantity; i++)
 		fillellipse(20+MapLength*MotorVector[i].Position.x,20+MapLength*MotorVector[i].Position.y,Radius,Radius);
-	
 	/*
 	每秒执行一次
 	对每个正在移动的骑手，调用move，更新位置
@@ -283,47 +283,81 @@ void update_Motor() //todo  需要添加数量等更新
 
 int cal_Distance(const Point& A, const Point& B) //todo
 {
-	return ((A.x - B.x) >> 1) + ((A.y - B.y) >> 1);
+	return abs((A.x - B.x) >> 1) + abs((A.y - B.y) >> 1);
 }
 
-vector<Point> sv_Path(MaxBurden);
-vector<Point> sv_Path_Min(MaxBurden);
+vector<vector<int>> Distance(MaxBurden, vector<int>(MaxBurden, 0));
+vector<bool> vis(MaxBurden);
+vector<int> sv_Path(MaxBurden);
+vector<int> sv_Path_Min(MaxBurden);
 int sv_Dis_Min = INF;
 
-void dfs_Path(int have, int need, vector<bool> visRes, int dis) //已有点个数 需要点个数 访问数组 现在路程
+void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder) //已有点个数 需要点个数 访问数组 现在路程
 {
 	if (dis >= sv_Dis_Min) return;
+
+	sv_Path[have] = nowAt;
 	if (have == need)
 	{
 		sv_Dis_Min = dis;
-		sv_Path_Min.assign(sv_Path.begin(), sv_Path.end());
+		for (int i = 1; i <= need + 1; i++) sv_Path_Min[i] = sv_Path[i];
+		return;
 	}
 
-	//for(int i=)
+	for (int i = 1; i <= need; i++)
+	{
+		if (vis[i]) //这个点没到过 
+		{
+			if (!nowOrder[i].isRes) //如果没去过且该点是顾客
+			{
+				if (vis[i + 1] == false) //到过这个点对应的商家
+				{
+					vis[i] = false;
+					dfs_Path(have + 1, need, i, dis + Distance[nowAt][i], nowOrder);
+					vis[i] = true;
+				}
+			}
+			else //该点是店家
+			{
+				vis[i] = false;
+				dfs_Path(have + 1, need, i, dis + Distance[nowAt][i], nowOrder);
+				vis[i] = true;
+			}
+		}
+	}
 	return;
 }
 
 void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
 {
-	vector<bool> visRes(nowOrder.size(), true); //创建一个size大小的true数组 用于保存是否之前访问过对应的商家
-	//vector<Point> sv;
-	//dfs_Path(0, nowOrder.size(), visRes, 0);
+	sv_Dis_Min = INF;
+	for (int i = 0; i <= quantity; i++) vis[i] = true;
+	//初始化 
 
-	/*
-	此处dfs未完成 先直接返回原始点 非优解
-	*/
-	for (int i = 0; i < quantity; i++)
+	for (int i = 0; i <= quantity; i++)
 	{
-		//cout << nowOrder[i].x << " " << nowOrder[i].y << ",";
-		sv_Path_Min[i] = nowOrder[i];
+		Distance[i][i] = 0;
+		for (int j = i + 1; j <= quantity; j++)
+		{
+			Distance[i][j] = cal_Distance(nowOrder[i], nowOrder[j]);
+			Distance[j][i] = Distance[i][j];
+		}
+	}
+	//计算距离 
+
+	for (int i = 1; i <= quantity; i++)
+	{
+		if (nowOrder[i].isRes) //选择一个商家的点开始 
+		{
+			vis[i] = false;
+			dfs_Path(1, quantity, i, Distance[0][i], nowOrder);
+			vis[i] = true;
+		}
 	}
 
-	//
-	
-	//先清空后添加新数据 completed
-	while(!ex.Map.empty()) ex.Map.pop();
-	for (int i = 0; i < quantity; i++) ex.Map.push(sv_Path_Min[i]);
-	
+	while (!ex.Map.empty()) ex.Map.pop();
+	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]);
+
 	return;
 }
 
@@ -333,7 +367,8 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 	stack<Point> sv_nowOrder; //保存传入的order栈
 	int sv_Map_size = ex.Map.size();
 	int quantity=nowOrder.size();
-
+	
+	nowOrder_vec.push_back(ex.Position);
 	while (!nowOrder.empty()) //将stack转化为vector 方便操作
 	{
 		nowOrder_vec.push_back(nowOrder.top());
@@ -349,7 +384,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 		sv_nowOrder.pop();
 	}
 	
-	reverse_Stack(ex.Map); //将倒序点反转 
+	//reverse_Stack(ex.Map); //将倒序点反转 
 	if (ex.Map.size() > sv_Map_size) return true; //如果分配后该骑手Map增大 即分配成功
 	//else
 	return false;
@@ -412,6 +447,17 @@ void purchase_Motor() //completed
 
 void output() //completed
 {
+	//屏幕输出 
+	cout << "时间: " << _Time << endl;
+	cout << "当前账户金额数: " << _Money << endl;
+	for (int i = 0; i < _MotorQuantity; i++)
+		cout << MotorVector[i] << endl;
+	cout << "接单数: " << _GetOrder << endl;
+	cout << "完成数: " << _CompleteOrder << endl;
+	cout << "超时数: " << _OverTimeOrder << endl;
+	cout << endl;
+	
+	//文件输出 
 	outfile << "时间: " << _Time << endl;
 	outfile << "当前账户金额数: " << _Money << endl;
 	for (int i = 0; i < _MotorQuantity; i++)
@@ -431,8 +477,6 @@ void init() //todo
 	for(int x=0;x<MapLength * MapSize;x+=2*MapLength)
 		for(int y=0;y<MapLength * MapSize;y+=2*MapLength)
 			bar(x,y,x+MapLength,y+MapLength);
-	//getch();
-	//closegraph();
 	
 	//输入并计算初始点 
 	Data tmp;

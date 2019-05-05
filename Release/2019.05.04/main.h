@@ -14,8 +14,7 @@
 #define Punish 50
 #define TimeMaximum 60
 #define LimitTime 30
-#define PreMergeTime 5  //经验时间 接收多长时间内的单 
-#define EndMergeTime 25 //经验时间 最大订单路径长度 
+#define PreMergeTime 5 //经验时间 
 #define MaxOrder 999
 #define MapSize 17
 #define MaxBurden 10 //即最多五组订单 

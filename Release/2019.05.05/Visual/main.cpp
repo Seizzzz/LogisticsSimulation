@@ -1,4 +1,6 @@
 #include "main.h"
+#include <windows.h>
+#include "graphics.h"
 using namespace std;
 
 ifstream infile(InputFileName);
@@ -96,6 +98,7 @@ int main()
 
 	while (_Money >= 0) //当 
 	{
+		Sleep(DelayTime);
 		//if(_CompleteOrder + _OverTimeOrder == _TotalOrder) exit(0);
 		if(DataStack.empty() && !judge_MotorMoving()) break;
 		update_Motor();
@@ -211,6 +214,14 @@ bool judge_Arrive(Motor& ex) //completed
 
 void update_Motor() //todo  需要添加数量等更新 
 {
+	cleardevice();
+	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
+	for(int x=0;x<MapLength * MapSize;x+=2*MapLength)
+		for(int y=0;y<MapLength * MapSize;y+=2*MapLength)
+			bar(x,y,x+MapLength,y+MapLength);
+	setfillcolor(EGERGB(0xFF, 0x0, 0x0));
+	for(int i = 0; i < _MotorQuantity; i++)
+		fillellipse(20+MapLength*MotorVector[i].Position.x,20+MapLength*MotorVector[i].Position.y,Radius,Radius);
 	/*
 	每秒执行一次
 	对每个正在移动的骑手，调用move，更新位置
@@ -437,6 +448,17 @@ void purchase_Motor() //completed
 
 void output() //completed
 {
+	//屏幕输出 
+	cout << "时间: " << _Time << endl;
+	cout << "当前账户金额数: " << _Money << endl;
+	for (int i = 0; i < _MotorQuantity; i++)
+		cout << MotorVector[i] << endl;
+	cout << "接单数: " << _GetOrder << endl;
+	cout << "完成数: " << _CompleteOrder << endl;
+	cout << "超时数: " << _OverTimeOrder << endl;
+	cout << endl;
+	
+	//文件输出 
 	outfile << "时间: " << _Time << endl;
 	outfile << "当前账户金额数: " << _Money << endl;
 	for (int i = 0; i < _MotorQuantity; i++)
@@ -450,6 +472,13 @@ void output() //completed
 
 void init() //todo
 {
+	initgraph(MapLength * MapSize, MapLength * MapSize);
+	setbkcolor(EGERGB(0x0, 0x0, 0x0));
+	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
+	for(int x=0;x<MapLength * MapSize;x+=2*MapLength)
+		for(int y=0;y<MapLength * MapSize;y+=2*MapLength)
+			bar(x,y,x+MapLength,y+MapLength);
+	
 	//输入并计算初始点 
 	Data tmp;
 	initPoint = Point{0,0};

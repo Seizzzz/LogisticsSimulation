@@ -18,6 +18,9 @@
 #define EndMergeTime 25 //经验时间 最大订单路径长度 
 #define MaxOrder 999
 #define MapSize 17
+#define MapLength 40
+#define Radius 10
+#define DelayTime 300
 #define MaxBurden 10 //即最多五组订单 
 #define MaxMotor 15
 #define MotorPrice 300

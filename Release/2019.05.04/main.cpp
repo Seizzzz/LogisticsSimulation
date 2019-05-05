@@ -343,11 +343,10 @@ void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
 			vis[i] = true;
 		}
 	}
-	
-	if(sv_Dis_Min > EndMergeTime) return; //如果添加后路径过长 
-	//else
+
 	while (!ex.Map.empty()) ex.Map.pop();
 	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]);
+
 	return;
 }
 
@@ -355,7 +354,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 {
 	vector<Point> nowOrder_vec; //传入dfs的结构体数组
 	stack<Point> sv_nowOrder; //保存传入的order栈
-	//int sv_Map_size = ex.Map.size();
+	int sv_Map_size = ex.Map.size();
 	int quantity=nowOrder.size();
 	
 	nowOrder_vec.push_back(ex.Position);
@@ -375,7 +374,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 	}
 	
 	//reverse_Stack(ex.Map); //将倒序点反转 
-	if (sv_Dis_Min <= EndMergeTime) return true; //如果分配后时间允许 即分配成功
+	if (ex.Map.size() > sv_Map_size) return true; //如果分配后该骑手Map增大 即分配成功
 	//else
 	return false;
 } 

@@ -147,9 +147,19 @@ int exist_Motor() //completed
 {
 	for(int i = 0; i < _MotorQuantity; i++)
 	{
+		//如果骑手无任务且返回到了起点 优先使用  因此处起点位置全局较优 
 		if(MotorVector[i].enable && //骑手已购买 
 		   MotorVector[i].Map.empty() && //骑手当前无任务 
-		   MotorVector[i].Position == initPoint) return i; //返回可用骑手编号 
+		   MotorVector[i].Position == initPoint) return i; //返回可用骑手编号
+		    
+		//其次使用未返回起点但无任务的骑手 
+		if(MotorVector[i].enable && //骑手已购买 
+		   MotorVector[i].Map.size() == 1 && //骑手当前目标只剩一个点了 
+		   MotorVector[i].Map.top() == initPoint) //当前只需返回起点 
+			{
+				MotorVector[i].Map.pop(); //取消返回起点的计划 准备接受任务指派 
+				return i;
+			}
 	}
 	return -1; //未找到 
 }

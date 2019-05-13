@@ -29,6 +29,13 @@
 #define InputFileName  "sales.txt"
 #define OutputFileName "output.txt" 
 
+/* exit value
+0 --- 正常结束 
+1 --- 吊销营业执照 
+2 --- 破产 
+3 --- 被判定恶意废单 
+*/
+
 int _Map[18][18]; //[0~17][0~17] 
 int _Time = 0; //当前时间 
 int _Money; //总钱数 

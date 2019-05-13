@@ -126,6 +126,8 @@ int main()
 		output();
 		_Time++;
 	}
+	
+	if(_Money < 0) exit(2);
 
 	return 0;
 }
@@ -274,8 +276,9 @@ void update_Motor() //todo  需要添加数量等更新
 					{
 						_Money += Profit;
 						_CompleteOrder++;
-					} 
-					else
+					}
+					else if(_Time > MotorVector[i].Map.top().deadline + LimitTime) exit(3); //(60,...
+					else //(30,60]
 					{
 						_Money -= Punish;
 						_OverTimeOrder++;

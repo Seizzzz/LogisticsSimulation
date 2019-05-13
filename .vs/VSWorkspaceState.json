@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Main"
+    "\\Main",
+    "\\Release",
+    "\\Release\\2019.05.13"
   ],
-  "SelectedNode": "\\NP_Order.sln",
+  "SelectedNode": "\\Release\\2019.05.13\\main.cpp",
   "PreviewInSolutionExplorer": false
 }

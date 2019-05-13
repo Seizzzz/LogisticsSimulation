@@ -48,29 +48,29 @@ ostream& operator << (ostream& out, const Data& ex)
 }
 bool operator == (const Point& left, const Point& right)
 {
-	if(left.x == right.x && left.y == right.y) return true;
+	if (left.x == right.x && left.y == right.y) return true;
 	return false;
 }
-bool operator != (const Point& left, const Point& right)
+bool operator != (const Point & left, const Point & right)
 {
 	return !(left == right);
 }
 
-template<typename T> void reverse_Stack(stack<T>& s)
+template<typename T> void reverse_Stack(stack<T> & s)
 {
 	stack<T> tmp1;
 	stack<T> tmp2;
-	while(!s.empty())
+	while (!s.empty())
 	{
 		tmp1.push(s.top());
 		s.pop();
 	}
-	while(!tmp1.empty())
+	while (!tmp1.empty())
 	{
 		tmp2.push(tmp1.top());
 		tmp1.pop();
 	}
-	while(!tmp2.empty())
+	while (!tmp2.empty())
 	{
 		s.push(tmp2.top());
 		tmp2.pop();
@@ -86,10 +86,10 @@ void deal_DataStack();
 bool judge_Overtime();
 bool judge_MotorMoving();
 int exist_Motor();
-int cal_Distance(const Point& A, const Point& B);
-void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder);
-void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity);
-void move_Motor(Motor& who);
+int cal_Distance(const Point & A, const Point & B);
+void dfs_Path(int have, int need, int nowAt, int dis, vector<Point> & nowOrder);
+void search_Path(Motor & ex, vector<Point> & nowOrder, int quantity);
+void move_Motor(Motor & who);
 
 int main()
 {
@@ -100,14 +100,14 @@ int main()
 	{
 		Sleep(DelayTime);
 		//if(_CompleteOrder + _OverTimeOrder == _TotalOrder) exit(0);
-		if(DataStack.empty() && !judge_MotorMoving()) break;
+		if (DataStack.empty() && !judge_MotorMoving()) break;
 		update_Motor();
-		
-		while(!DataStack.empty() && _Time >= DataStack.top().OrderTime) //当前时间及前 还有未处理的订单
+
+		while (!DataStack.empty() && _Time >= DataStack.top().OrderTime) //当前时间及前 还有未处理的订单
 		{
-			if(exist_Motor() == -1) //如果不存在可用骑手 
+			if (exist_Motor() == -1) //如果不存在可用骑手 
 			{
-				if(_Money >= MotorPrice)
+				if (_Money >= MotorPrice)
 				{
 					purchase_Motor();
 					deal_DataStack();
@@ -115,19 +115,19 @@ int main()
 				else break;
 			}
 			else deal_DataStack(); //如果存在骑手 则分配订单 
-		} 
-		
+		}
+
 		if (!DataStack.empty() && judge_Overtime())
 		{
 			DataStack.pop();
 			exit(1); //return 1 吊销营业执照
 		}
-		
+
 		output();
 		_Time++;
 	}
-	
-	if(_Money < 0) exit(2);
+
+	if (_Money < 0) exit(2);
 
 	return 0;
 }
@@ -135,41 +135,41 @@ int main()
 ///******///
 bool judge_MotorMoving()
 {
-	for(int i = 0; i < _MotorQuantity; i++)
+	for (int i = 0; i < _MotorQuantity; i++)
 	{
-		if(!MotorVector[i].Map.empty()) return true;
+		if (!MotorVector[i].Map.empty()) return true;
 	}
 	return false;
 }
 
 bool judge_Overtime() //todo
 {
-	if(_Time > DataStack.top().OrderTime + 3) return true;
+	if (_Time > DataStack.top().OrderTime + 3) return true;
 	return false;
 }
 
 int exist_Motor() //completed
 {
-	for(int i = 0; i < _MotorQuantity; i++)
+	for (int i = 0; i < _MotorQuantity; i++)
 	{
 		//如果骑手无任务且返回到了起点 优先使用  因此处起点位置全局较优 
-		if(MotorVector[i].enable && //骑手已购买 
-		   MotorVector[i].Map.empty() && //骑手当前无任务 
-		   MotorVector[i].Position == initPoint) return i; //返回可用骑手编号
-		    
-		//其次使用未返回起点但无任务的骑手 
-		if(MotorVector[i].enable && //骑手已购买 
-		   MotorVector[i].Map.size() == 1 && //骑手当前目标只剩一个点了 
-		   MotorVector[i].Map.top() == initPoint) //当前只需返回起点 
-			{
-				MotorVector[i].Map.pop(); //取消返回起点的计划 准备接受任务指派 
-				return i;
-			}
+		if (MotorVector[i].enable && //骑手已购买 
+			MotorVector[i].Map.empty() && //骑手当前无任务 
+			MotorVector[i].Position == initPoint) return i; //返回可用骑手编号
+
+		 //其次使用未返回起点但无任务的骑手 
+		if (MotorVector[i].enable && //骑手已购买 
+			MotorVector[i].Map.size() == 1 && //骑手当前目标只剩一个点了 
+			MotorVector[i].Map.top() == initPoint) //当前只需返回起点 
+		{
+			MotorVector[i].Map.pop(); //取消返回起点的计划 准备接受任务指派 
+			return i;
+		}
 	}
 	return -1; //未找到 
 }
 
-void move_Motor(Motor& who) //completed
+void move_Motor(Motor & who) //completed
 {
 	int i = (who.Map.top().x - who.Position.x > 0) ? 1 : -1,
 		j = (who.Map.top().y - who.Position.y > 0) ? 1 : -1;
@@ -192,48 +192,48 @@ void move_Motor(Motor& who) //completed
 			who.Position.y += j;
 		}
 		else if (abs(who.Map.top().x - who.Position.x) == 1) //行方向上到位
-			who.Position.y += 2*j;
+			who.Position.y += 2 * j;
 		else if (abs(who.Map.top().y - who.Position.y) == 1) //列方向上到位
-			who.Position.x += 2*i;
+			who.Position.x += 2 * i;
 	}
 
 	return;
 }
 
-bool judge_Arrive(Motor& ex) //completed
+bool judge_Arrive(Motor & ex) //completed
 {
-	if(ex.Map.size() == 1 && ex.Map.top() == initPoint) //因初始点不在店家类位置 此处需单独操作判断 
+	if (ex.Map.size() == 1 && ex.Map.top() == initPoint) //因初始点不在店家类位置 此处需单独操作判断 
 	{
-		if(abs(ex.Position.x - initPoint.x) == 1 && abs(ex.Position.y - initPoint.y) == 1)
+		if (abs(ex.Position.x - initPoint.x) == 1 && abs(ex.Position.y - initPoint.y) == 1)
 		{
 			ex.Position = initPoint; //回到初始点 
-			while(!ex.Map.empty()) ex.Map.pop(); //清空 
+			while (!ex.Map.empty()) ex.Map.pop(); //清空 
 			return true;
 		}
 		return false;
-	} 
-	
-	if(ex.Map.top().x == ex.Position.x)
-	{
-		if(abs(ex.Map.top().y - ex.Position.y) == 1) return true; //在同行 且列坐标差为1 即在左右 
 	}
-	else if(ex.Map.top().y == ex.Position.y)
+
+	if (ex.Map.top().x == ex.Position.x)
 	{
-		if(abs(ex.Map.top().x - ex.Position.x) == 1) return true; //在同列 且行坐标差为1 即在上下 
+		if (abs(ex.Map.top().y - ex.Position.y) == 1) return true; //在同行 且列坐标差为1 即在左右 
 	}
-	return false; 
-} 
+	else if (ex.Map.top().y == ex.Position.y)
+	{
+		if (abs(ex.Map.top().x - ex.Position.x) == 1) return true; //在同列 且行坐标差为1 即在上下 
+	}
+	return false;
+}
 
 void update_Motor() //todo  需要添加数量等更新 
 {
 	cleardevice();
 	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
-	for(int x=0;x<MapLength * MapSize;x+=2*MapLength)
-		for(int y=0;y<MapLength * MapSize;y+=2*MapLength)
-			bar(x,y,x+MapLength,y+MapLength);
+	for (int x = 0; x < MapLength * MapSize; x += 2 * MapLength)
+		for (int y = 0; y < MapLength * MapSize; y += 2 * MapLength)
+			bar(x, y, x + MapLength, y + MapLength);
 	setfillcolor(EGERGB(0xFF, 0x0, 0x0));
-	for(int i = 0; i < _MotorQuantity; i++)
-		fillellipse(20+MapLength*MotorVector[i].Position.x,20+MapLength*MotorVector[i].Position.y,Radius,Radius);
+	for (int i = 0; i < _MotorQuantity; i++)
+		fillellipse(20 + MapLength * MotorVector[i].Position.x, 20 + MapLength * MotorVector[i].Position.y, Radius, Radius);
 	/*
 	每秒执行一次
 	对每个正在移动的骑手，调用move，更新位置
@@ -241,8 +241,8 @@ void update_Motor() //todo  需要添加数量等更新
 	当为空且不在初始点时，返回初始点
 	return;
 	*/
-	
-	for(int i = 0; i < _MotorQuantity; i++) //遍历每一个骑手 
+
+	for (int i = 0; i < _MotorQuantity; i++) //遍历每一个骑手 
 	{
 		/*test
 		stack<Point> tmp;
@@ -254,47 +254,47 @@ void update_Motor() //todo  需要添加数量等更新
 			{
 				tmp.push(MotorVector[i].Map.top());
 				MotorVector[i].Map.pop();
-			}	
-		} 
+			}
+		}
 		while(!tmp.empty())
 		{
-			cout << "(" << tmp.top().x << "," << tmp.top().y << ") "; 
+			cout << "(" << tmp.top().x << "," << tmp.top().y << ") ";
 			MotorVector[i].Map.push(tmp.top());
 			tmp.pop();
 		}
 		cout << endl;
 		*/
-		
-		if(!MotorVector[i].Map.empty()) //当前正在行进 
+
+		if (!MotorVector[i].Map.empty()) //当前正在行进 
 		{
-			if(judge_Arrive(MotorVector[i])) //如果在过程点附近
+			if (judge_Arrive(MotorVector[i])) //如果在过程点附近
 			{
-				if(MotorVector[i].Map.empty()) continue; //对应回到起始点情况 
-				if(!MotorVector[i].Map.top().isRes) //如果完成的点是顾客 
+				if (MotorVector[i].Map.empty()) continue; //对应回到起始点情况 
+				if (!MotorVector[i].Map.top().isRes) //如果完成的点是顾客 
 				{
-					if(MotorVector[i].Map.top().deadline >= _Time) //及时赶到
+					if (MotorVector[i].Map.top().deadline >= _Time) //及时赶到
 					{
 						_Money += Profit;
 						_CompleteOrder++;
 					}
-					else if(_Time > MotorVector[i].Map.top().deadline + LimitTime) exit(3); //(60,...
+					else if (_Time > MotorVector[i].Map.top().deadline + LimitTime) exit(3); //(60,...
 					else //(30,60]
 					{
 						_Money -= Punish;
 						_OverTimeOrder++;
 					}
-				} 
-		   		MotorVector[i].Map.pop();
-			} 
+				}
+				MotorVector[i].Map.pop();
+			}
 			else move_Motor(MotorVector[i]); //在过程中 更新位置 
 		}
-		else if(MotorVector[i].Position != initPoint) MotorVector[i].Map.push(initPoint); //无目标 但不在起点 
+		else if (MotorVector[i].Position != initPoint) MotorVector[i].Map.push(initPoint); //无目标 但不在起点 
 		//else 无目标 且在起点 忽略 
 	}
 	return;
 }
 
-int cal_Distance(const Point& A, const Point& B) //todo
+int cal_Distance(const Point & A, const Point & B) //todo
 {
 	return abs((A.x - B.x) >> 1) + abs((A.y - B.y) >> 1);
 }
@@ -305,7 +305,7 @@ vector<int> sv_Path(MaxBurden);
 vector<int> sv_Path_Min(MaxBurden);
 int sv_Dis_Min = INF;
 
-void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder) //已有点个数 需要点个数 访问数组 现在路程
+void dfs_Path(int have, int need, int nowAt, int dis, vector<Point> & nowOrder) //已有点个数 需要点个数 访问数组 现在路程
 {
 	if (dis >= sv_Dis_Min) return;
 
@@ -341,7 +341,7 @@ void dfs_Path(int have, int need, int nowAt, int dis, vector<Point>& nowOrder) /
 	return;
 }
 
-void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
+void search_Path(Motor & ex, vector<Point> & nowOrder, int quantity) //todo
 {
 	sv_Dis_Min = INF;
 	for (int i = 0; i <= quantity; i++) vis[i] = true;
@@ -367,21 +367,21 @@ void search_Path(Motor& ex, vector<Point>& nowOrder, int quantity) //todo
 			vis[i] = true;
 		}
 	}
-	
-	if(sv_Dis_Min > EndMergeTime) return; //如果添加后路径过长 
+
+	if (sv_Dis_Min > EndMergeTime) return; //如果添加后路径过长 
 	//else
 	while (!ex.Map.empty()) ex.Map.pop();
 	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]);
 	return;
 }
 
-bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
+bool able_Order(Motor & ex, stack<Point> & nowOrder) //todo
 {
 	vector<Point> nowOrder_vec; //传入dfs的结构体数组
 	stack<Point> sv_nowOrder; //保存传入的order栈
 	//int sv_Map_size = ex.Map.size();
-	int quantity=nowOrder.size();
-	
+	int quantity = nowOrder.size();
+
 	nowOrder_vec.push_back(ex.Position);
 	while (!nowOrder.empty()) //将stack转化为vector 方便操作
 	{
@@ -389,7 +389,7 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 		sv_nowOrder.push(nowOrder.top());
 		nowOrder.pop();
 	}
-	
+
 	search_Path(ex, nowOrder_vec, quantity); //准备分配
 
 	while (!sv_nowOrder.empty()) //将stack内容还愿
@@ -397,22 +397,22 @@ bool able_Order(Motor& ex, stack<Point>& nowOrder) //todo
 		nowOrder.push(sv_nowOrder.top());
 		sv_nowOrder.pop();
 	}
-	
+
 	//reverse_Stack(ex.Map); //将倒序点反转 
 	if (sv_Dis_Min <= EndMergeTime) return true; //如果分配后时间允许 即分配成功
 	//else
 	return false;
-} 
+}
 
-void merge_Order(Motor& ex)
+void merge_Order(Motor & ex)
 {
 	stack<Point> nowOrder; //保存要去的店家和顾客的位置 
 	stack<Data> sv; //保存输入数据 失败时push回 
 	int quantity = 0; //记录添加的订单数量 
-	
+
 	while (!DataStack.empty()) //不断判断是否能添加新的订单 
-	{	
-		if(DataStack.top().OrderTime <= _Time + PreMergeTime)
+	{
+		if (DataStack.top().OrderTime <= _Time + PreMergeTime)
 		{
 			sv.push(DataStack.top());
 			nowOrder.push(DataStack.top().Restaurant);
@@ -421,9 +421,9 @@ void merge_Order(Motor& ex)
 			nowOrder.push(DataStack.top().Customer);
 			nowOrder.top().isRes = false;
 			nowOrder.top().deadline = DataStack.top().OrderTime + LimitTime;
-			
+
 			DataStack.pop();
-			
+
 			if (able_Order(ex, nowOrder))
 			{
 				quantity++;
@@ -433,11 +433,11 @@ void merge_Order(Motor& ex)
 			{
 				DataStack.push(sv.top()); //还原上一个pop的元素
 				break; //下接return
-			} 
+			}
 		}
 		else break;
 	}
-	
+
 	_GetOrder += quantity;
 	return;
 }
@@ -450,7 +450,7 @@ void deal_DataStack() //completed
 }
 
 void purchase_Motor() //completed
-{	
+{
 	_Money -= MotorPrice;
 	MotorVector[_MotorQuantity].number = _MotorQuantity;
 	MotorVector[_MotorQuantity].enable = true;
@@ -470,7 +470,7 @@ void output() //completed
 	cout << "完成数: " << _CompleteOrder << endl;
 	cout << "超时数: " << _OverTimeOrder << endl;
 	cout << endl;
-	
+
 	//文件输出 
 	outfile << "时间: " << _Time << endl;
 	outfile << "当前账户金额数: " << _Money << endl;
@@ -489,14 +489,14 @@ void input_File()
 	while (infile >> tmp.Number) //输入
 	{
 		infile >> tmp.OrderTime
-			   >> tmp.Restaurant.x >> tmp.Restaurant.y
-			   >> tmp.Customer.x   >> tmp.Customer.y;
+			>> tmp.Restaurant.x >> tmp.Restaurant.y
+			>> tmp.Customer.x >> tmp.Customer.y;
 		tmp.Restaurant.x <<= 1;
 		tmp.Restaurant.y <<= 1;
 		tmp.Customer.x <<= 1;
 		tmp.Customer.y <<= 1;
 		DataStack.push(tmp);
-		
+
 		initPoint.x += tmp.Restaurant.x;
 		initPoint.y += tmp.Restaurant.y;
 		_TotalOrder++;
@@ -510,14 +510,14 @@ void input_Keyboard()
 	while (cin >> tmp.Number) //输入
 	{
 		cin >> tmp.OrderTime
-			   >> tmp.Restaurant.x >> tmp.Restaurant.y
-			   >> tmp.Customer.x   >> tmp.Customer.y;
+			>> tmp.Restaurant.x >> tmp.Restaurant.y
+			>> tmp.Customer.x >> tmp.Customer.y;
 		tmp.Restaurant.x <<= 1;
 		tmp.Restaurant.y <<= 1;
 		tmp.Customer.x <<= 1;
 		tmp.Customer.y <<= 1;
 		DataStack.push(tmp);
-		
+
 		initPoint.x += tmp.Restaurant.x;
 		initPoint.y += tmp.Restaurant.y;
 		_TotalOrder++;
@@ -530,21 +530,21 @@ void init() //todo
 	initgraph(MapLength * MapSize, MapLength * MapSize);
 	setbkcolor(EGERGB(0x0, 0x0, 0x0));
 	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
-	for(int x=0;x<MapLength * MapSize;x+=2*MapLength)
-		for(int y=0;y<MapLength * MapSize;y+=2*MapLength)
-			bar(x,y,x+MapLength,y+MapLength);
-	
-	initPoint = Point{0,0};
+	for (int x = 0; x < MapLength * MapSize; x += 2 * MapLength)
+		for (int y = 0; y < MapLength * MapSize; y += 2 * MapLength)
+			bar(x, y, x + MapLength, y + MapLength);
+
+	initPoint = Point{ 0,0 };
 	_Money = initMoney;
-	if(infile) input_File(); //成功打开文件 从文件读入 
+	if (infile) input_File(); //成功打开文件 从文件读入 
 	else input_Keyboard(); //无文件 从键盘读入 
 	//输入并计算初始点 
-	
+
 	initPoint.x /= _TotalOrder;
 	initPoint.y /= _TotalOrder;
-	if(initPoint.x % 2){ if(initPoint.y % 2) initPoint.x++; } //x,y同为奇数 
-	else{ if(initPoint.y % 2 == 0) initPoint.y++; } //x,y同为偶数 
-	
+	if (initPoint.x % 2) { if (initPoint.y % 2) initPoint.x++; } //x,y同为奇数 
+	else { if (initPoint.y % 2 == 0) initPoint.y++; } //x,y同为偶数 
+
 	reverse_Stack(DataStack);
 	return;
 }

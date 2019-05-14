@@ -14,8 +14,6 @@
 #define Punish 50
 #define TimeMaximum 60
 #define LimitTime 30
-#define PreMergeTime 10  //经验时间 接收多长时间内的单 
-#define EndMergeTime 40 //经验时间 最大订单路径长度 
 #define MaxOrder 999
 #define MapSize 17
 #define MapLength 40
@@ -35,6 +33,9 @@
 2 --- 破产 
 3 --- 被判定恶意废单 
 */
+
+int PreMergeTime = 5;  //经验时间 接收多长时间内的单 
+int EndMergeTime = 25; //经验时间 最大订单路径长度 
 
 int _Map[18][18]; //[0~17][0~17] 
 int _Time = 0; //当前时间 

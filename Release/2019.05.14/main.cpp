@@ -3,7 +3,7 @@
 #include "graphics.h"
 using namespace std;
 
-ifstream intest("test.txt");
+ifstream intest(TestFileName);
 ifstream infile(InputFileName);
 ofstream outfile(OutputFileName);
 
@@ -485,10 +485,12 @@ void input_File()
 		infile >> tmp.OrderTime
 			>> tmp.Restaurant.x >> tmp.Restaurant.y
 			>> tmp.Customer.x >> tmp.Customer.y;
+		/*
 		tmp.Restaurant.x <<= 1;
 		tmp.Restaurant.y <<= 1;
 		tmp.Customer.x <<= 1;
 		tmp.Customer.y <<= 1;
+		*/
 		DataStack.push(tmp);
 
 		initPoint.x += tmp.Restaurant.x;
@@ -506,10 +508,12 @@ void input_Keyboard()
 		cin >> tmp.OrderTime
 			>> tmp.Restaurant.x >> tmp.Restaurant.y
 			>> tmp.Customer.x >> tmp.Customer.y;
+		/*
 		tmp.Restaurant.x <<= 1;
 		tmp.Restaurant.y <<= 1;
 		tmp.Customer.x <<= 1;
 		tmp.Customer.y <<= 1;
+		*/
 		DataStack.push(tmp);
 
 		initPoint.x += tmp.Restaurant.x;

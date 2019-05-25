@@ -10,7 +10,7 @@
 #include <algorithm>
 
 #define initMoney 1000
-#define PreserveMoney 100
+#define PreserveMoney 50
 #define Profit 10
 #define Punish 50
 #define TimeMaximum 60
@@ -19,7 +19,7 @@
 #define MapSize 17
 #define MapLength 40
 #define Radius 10
-#define DelayTime 300
+#define DelayTime 150
 #define MaxBurden 20 //即最多五组订单 
 #define MaxMotor 15
 #define MotorPrice 300

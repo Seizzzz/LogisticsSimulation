@@ -43,13 +43,13 @@ void move_Motor(Motor & who) //completed
 
 	if (who.Map.top().x == who.Position.x)
 	{
-		if(who.Position.x + 1 > MapSize) who.Position.x--;
+		if(who.Position.x == MapSize - 1) who.Position.x--;
 		else who.Position.x++; //同行 换到另一行
 		who.Position.y += j;
 	}
 	else if (who.Map.top().y == who.Position.y)
 	{
-		if(who.Position.y + 1 > MapSize) who.Position.y--;
+		if(who.Position.y == MapSize - 1) who.Position.y--;
 		else who.Position.y++; //同列 换到另一列
 		who.Position.x += i;
 	}

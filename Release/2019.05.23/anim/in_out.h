@@ -96,9 +96,12 @@ void output() //completed
 			outfile << outFail.top() << " ";
 			outFail.pop();
 		}
-	
 	cout << endl;
 	outfile << endl;
+	
+	//利润输出
+	cout << "当前利润: " << _Money + _MotorQuantity*MotorPrice - initMoney << endl;
+	outfile << "当前利润: " << _Money + _MotorQuantity*MotorPrice - initMoney << endl;
 	
 	return;
 }

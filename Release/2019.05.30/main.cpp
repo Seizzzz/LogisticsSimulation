@@ -49,7 +49,7 @@ int main()
 				{
 					while(_Money - PreserveMoney >= MotorPrice) purchase_Motor(); //则一直买 
 					deal_DataStack(); //购买后处理订单 
-				} 
+				}
 				else break; //钱不够 等下一时间节点 
 			}
 			else deal_DataStack(); //如果存在骑手 则分配订单 

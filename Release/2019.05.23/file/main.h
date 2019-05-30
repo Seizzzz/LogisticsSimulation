@@ -13,7 +13,7 @@
 #define Profit 10
 #define Punish 50
 #define TimeMaximum 60
-#define LimitTime 30
+#define LimitTime 5
 #define MaxOrder 999
 #define MapSize 17
 #define MapLength 40

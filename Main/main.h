@@ -17,9 +17,9 @@
 #define LimitTime 30
 #define MaxOrder 999
 #define MapSize 17
-#define MapLength 40
 #define Radius 10
 #define DelayTime 150
+#define MapLength 40
 #define MaxBurden 20 //即最多五组订单 
 #define MaxMotor 15
 #define MotorPrice 300

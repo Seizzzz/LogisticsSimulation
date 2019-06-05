@@ -26,6 +26,7 @@ bool operator != (const Point & left, const Point & right);
 template<typename T> void reverse_Stack(stack<T> & s);
 
 #include "realize.h"
+#include "animate.h"
 #include "in_out.h"
 
 int main()
@@ -34,12 +35,16 @@ int main()
 	intest >> PreMergeTime >> EndMergeTime;
 	
 	init();
+	ani_init();
 
 	while (_Money >= 0) //当 
 	{
 		Sleep(DelayTime); //动画延时 
-		if (DataStack.empty() && !judge_MotorMoving()) break; //判断是否处理完所有订单 
+		//if (DataStack.empty() && !judge_MotorMoving()) break; //判断是否处理完所有订单 
+		
 		update_Motor(); //更新骑手 
+		ani_update();
+		ani_input();
 
 		while (!DataStack.empty() && _Time >= DataStack.top().OrderTime) //当前时间及前 还有未处理的订单
 		{

@@ -44,7 +44,7 @@ int main()
 		while (!DataStack.empty() && _Time >= DataStack.top().OrderTime) //当前时间及前 还有未处理的订单
 		{
 			if (exist_Motor() == -1) //如果不存在可用骑手 
-			{
+			{ 
 				if (_Money - PreserveMoney >= MotorPrice) //如果当前减去预留钱款后能购买骑手 
 				{
 					while(_Money - PreserveMoney >= MotorPrice) purchase_Motor(); //则一直买 

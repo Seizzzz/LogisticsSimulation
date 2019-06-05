@@ -154,8 +154,8 @@ void input_Keyboard()
 
 void init() //todo
 {
-	initgraph(MapLength * MapSize, MapLength * MapSize);
-	setbkcolor(EGERGB(0x0, 0x0, 0x0));
+	initgraph(MapLength * MapSize + DealLength, MapLength * MapSize);
+	setbkcolor(EGERGB(0xFF, 0xFF, 0xFF));
 	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
 	for (int x = 0; x < MapLength * MapSize; x += 2 * MapLength)
 		for (int y = 0; y < MapLength * MapSize; y += 2 * MapLength)

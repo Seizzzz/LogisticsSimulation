@@ -2,18 +2,18 @@
 
 ostream& operator << (ostream& out, Motor& ex)
 {
-	out << "第" << ex.number << "位骑手的位置: "
+	out << "骑手" << ex.number << "位置："
 		//<< "(" << (ex.Position.x >> 1) << "," << (ex.Position.y >> 1) << ")";
-		<< "(" << ex.Position.x << "," << ex.Position.y << ")"
-		<< " 停靠: ";
+		<< ex.Position.x << "，" << ex.Position.y
+		<< "；停靠：";
 	
 	if(!ex.Map.empty() && judge_Near(ex))
 	{
-		if(ex.Map.top().isRes) out << "食客: ";
-		else out << "餐馆: ";
-		out << "(" << ex.Map.top().x << "," << ex.Map.top().y << ")";
+		if(ex.Map.top().isRes) out << "食客 ";
+		else out << "餐馆 ";
+		out << ex.Map.top().x << " " << ex.Map.top().y;
 	}
-	out << ";";
+	out << "；";
 	
 	return out;
 }
@@ -59,35 +59,31 @@ template<typename T> void reverse_Stack(stack<T> & s)
 void output() //completed
 {
 	//屏幕输出 
-	cout << "时间: " << _Time << endl;
-	cout << "钱: " << _Money << endl;
-	for (int i = 0; i < _MotorQuantity; i++)
-		cout << MotorVector[i] << endl;
-	cout << "接单数: " << _GetOrder << endl;
+	cout << "时间：" << _Time << endl;
+	cout << "钱：" << _Money << endl;
+	cout << "接单数：" << _GetOrder << endl;
 
 	//文件输出 
-	outfile << "时间: " << _Time << endl;
-	outfile << "钱: " << _Money << endl;
-	for (int i = 0; i < _MotorQuantity; i++)
-		outfile << MotorVector[i] << endl;
-	outfile << "接单数: " << _GetOrder << endl;
+	outfile << "时间：" << _Time << endl;
+	outfile << "钱：" << _Money << endl;
+	outfile << "接单数：" << _GetOrder << endl;
 	
 	//补充输出 
-	cout << "完成数: " << _CompleteOrder << " ";
-	outfile << "完成数: " << _CompleteOrder << " ";
+	cout << "完成数：" << _CompleteOrder << "；";
+	outfile << "完成数：" << _CompleteOrder << "；";
 	cout << "结单：";
 	outfile << "结单：";
 		while(!outComplete.empty())
 		{
-			cout << outComplete.top() << "; ";
-			outfile << outComplete.top() << "; ";
+			cout << outComplete.top() << " ";
+			outfile << outComplete.top() << " ";
 			outComplete.pop();
 		}
-	cout << endl;
-	outfile << endl;
+	cout << "；" << endl;
+	outfile << "；" << endl;
 		
-	cout << "超时数: " << _OverTimeOrder << "; ";
-	outfile << "超时数: " << _OverTimeOrder << "; ";
+	cout << "超时数：" << _OverTimeOrder << "；";
+	outfile << "超时数：" << _OverTimeOrder << "；";
 	cout << "罚单：";
 	outfile << "罚单：";
 		while(!outFail.empty())
@@ -96,12 +92,13 @@ void output() //completed
 			outfile << outFail.top() << " ";
 			outFail.pop();
 		}
-	cout << endl;
-	outfile << endl;
+	cout << "；" << endl;
+	outfile << "；" << endl;
 	
-	//利润输出
-	cout << "当前利润: " << _Money + _MotorQuantity*MotorPrice - initMoney << endl;
-	outfile << "当前利润: " << _Money + _MotorQuantity*MotorPrice - initMoney << endl;
+	for (int i = 0; i < _MotorQuantity; i++)
+		cout << MotorVector[i] << endl;
+	for (int i = 0; i < _MotorQuantity; i++)
+		outfile << MotorVector[i] << endl;
 	
 	return;
 }

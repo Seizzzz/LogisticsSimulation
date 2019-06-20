@@ -4,22 +4,22 @@ vector<vector<int>> Distance(MaxBurden, vector<int>(MaxBurden, 0));
 vector<bool> vis(MaxBurden);
 vector<int> sv_Path(MaxBurden);
 vector<int> sv_Path_Min(MaxBurden);
-int sv_Dis_Min = INF;
+int sv_Dis_Min = INF; //记录的最短距离 
 
-int cal_Distance(const Point & A, const Point & B) //todo
+int cal_Distance(const Point & A, const Point & B) //估算两点间距离 
 {
 	return abs((A.x - B.x) >> 1) + abs((A.y - B.y) >> 1);
 }
 
 void dfs_Path(int have, int need, int nowAt, int dis, vector<Point> & nowOrder) //已有点个数 需要点个数 访问数组 现在路程
 {
-	if (dis >= sv_Dis_Min) return;
+	if (dis >= sv_Dis_Min) return; //剪枝 
 
-	sv_Path[have] = nowAt;
-	if (have == need)
+	sv_Path[have] = nowAt; //记录当前点 
+	if (have == need) //已分配所有点顺序 
 	{
-		sv_Dis_Min = dis;
-		for (int i = 1; i <= need + 1; i++) sv_Path_Min[i] = sv_Path[i];
+		sv_Dis_Min = dis; //更新最短距离 
+		for (int i = 1; i <= need + 1; i++) sv_Path_Min[i] = sv_Path[i]; //记录顺序 
 		return;
 	}
 
@@ -49,8 +49,8 @@ void dfs_Path(int have, int need, int nowAt, int dis, vector<Point> & nowOrder) 
 
 void search_Path(Motor & ex, vector<Point> & nowOrder, int quantity) //todo
 {
-	sv_Dis_Min = INF;
-	for (int i = 0; i <= quantity; i++) vis[i] = true;
+	sv_Dis_Min = INF; //对每个传入的nowOrder 初始化最短距离 
+	for (int i = 0; i <= quantity; i++) vis[i] = true; //标记所有点可用 
 	//初始化 
 
 	for (int i = 0; i <= quantity; i++)
@@ -62,7 +62,7 @@ void search_Path(Motor & ex, vector<Point> & nowOrder, int quantity) //todo
 			Distance[j][i] = Distance[i][j];
 		}
 	}
-	//计算距离 
+	//预处理两点间距离 
 
 	for (int i = 1; i <= quantity; i++)
 	{
@@ -74,10 +74,10 @@ void search_Path(Motor & ex, vector<Point> & nowOrder, int quantity) //todo
 		}
 	}
 
-	if (sv_Dis_Min > EndMergeTime) return; //如果添加后路径过长 
+	if (sv_Dis_Min > EndMergeTime) return; //如果添加后路径过长 分配失败 
 	//else
-	while (!ex.Map.empty()) ex.Map.pop();
-	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]);
+	while (!ex.Map.empty()) ex.Map.pop(); //清空骑手Map 
+	for (int i = 1; i <= quantity; i++) ex.Map.push(nowOrder[sv_Path_Min[i]]); //重新记录目标点 
 	return;
 }
 
@@ -121,20 +121,23 @@ void merge_Order(Motor & ex)
 		if (DataStack.top().OrderTime <= _Time + PreMergeTime)
 		{
 			sv.push(DataStack.top());
+			//记录商家点信息 
 			nowOrder.push(DataStack.top().Restaurant);
 			nowOrder.top().begin = DataStack.top().OrderTime;
 			nowOrder.top().isRes = true;
+			nowOrder.top().Number = DataStack.top().Number;
 			nowOrder.top().deadline = INF;
+			//记录食客点信息 
 			nowOrder.push(DataStack.top().Customer);
 			nowOrder.top().isRes = false;
 			nowOrder.top().Number = DataStack.top().Number;
 			nowOrder.top().deadline = DataStack.top().OrderTime + LimitTime;
 
-			DataStack.pop();
+			DataStack.pop(); //完成记录 该条数据出栈 
 
-			if (able_Order(ex, nowOrder))
+			if (able_Order(ex, nowOrder)) //如果该订单能分配给当前骑手 
 			{
-				quantity++;
+				quantity++; //分配数增加 
 				continue;
 			}
 			else
@@ -146,11 +149,11 @@ void merge_Order(Motor & ex)
 		else break;
 	}
 
-	_GetOrder += quantity;
+	_GetOrder += quantity; //更新接单数 
 	return;
 }
 
-void deal_DataStack() //completed
+void deal_DataStack() //处理订单
 {
 	int able = exist_Motor(); //记录可用骑手的编号 
 	merge_Order(MotorVector[able]); //计算 并将过程点放入骑手Map中 

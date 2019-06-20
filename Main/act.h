@@ -1,17 +1,20 @@
 #pragma once
 
-bool judge_MotorMoving()
+char text_cus[] = "食客"; //临时存储 方便输出 
+char text_res[] = "餐馆";
+
+bool judge_MotorMoving() //判断骑手移动 
 {
-	for (int i = 0; i < _MotorQuantity; i++)
+	for (int i = 0; i < _MotorQuantity; i++) //若某骑手有当前目标点 
 	{
-		if (!MotorVector[i].Map.empty()) return true;
+		if (!MotorVector[i].Map.empty()) return true; 
 	}
 	return false;
 }
 
-bool judge_Overtime() //todo
+bool judge_Overtime() //判断超时
 {
-	if (_Time > DataStack.top().OrderTime + GetOrderLimit) return true;
+	if (_Time > DataStack.top().OrderTime + GetOrderLimit) return true; //若有订单超出接单时间后还未分配 
 	return false;
 }
 
@@ -38,7 +41,7 @@ int exist_Motor() //completed
 
 void move_Motor(Motor & who) //completed
 {
-	int i = (who.Map.top().x - who.Position.x > 0) ? 1 : -1,
+	int i = (who.Map.top().x - who.Position.x > 0) ? 1 : -1, //单位向量 
 		j = (who.Map.top().y - who.Position.y > 0) ? 1 : -1;
 
 	if (who.Map.top().x == who.Position.x)
@@ -118,7 +121,7 @@ void update_Motor() //todo  需要添加数量等更新
 	当为空且不在初始点时，返回初始点
 	return;
 	*/
-	cleardevice();
+	cleardevice(); //清空当前动画内容 
 	
 	//打印地图 
 	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
@@ -128,7 +131,10 @@ void update_Motor() //todo  需要添加数量等更新
 	//打印骑手 
 	setfillcolor(EGERGB(0xFF, 0x0, 0x0));
 	for (int i = 0; i < _MotorQuantity; i++)  
+	{
+		setfillcolor(MotorVector[i].color);
 		fillellipse(20 + MapLength * MotorVector[i].Position.x, 20 + MapLength * MotorVector[i].Position.y, Radius, Radius); 
+	}
 	//打印目标点 
 	setfillcolor(EGERGB(0x0, 0xFF, 0x0));
 	for (int i = 0; i < _MotorQuantity; i++)
@@ -138,6 +144,18 @@ void update_Motor() //todo  需要添加数量等更新
 			int tmpx = MapLength * MotorVector[i].Map.top().x,
 				tmpy = MapLength * MotorVector[i].Map.top().y;
 			bar(tmpx, tmpy, tmpx + MapLength, tmpy + MapLength);
+			
+			if(MotorVector[i].Map.top()==initPoint) continue; //如果是初始点 不显示信息 
+			
+			//对每个目标点 在其右输出相关信息 
+			setfont(20,0,"微软雅黑");
+			char temp[30];
+			sprintf(temp,"订单号:%d",MotorVector[i].Map.top().Number);
+			
+			if(MotorVector[i].Map.top().isRes) outtextxy(tmpx+40,tmpy,text_res);
+			else outtextxy(tmpx+40,tmpy,text_cus);
+			outtextxy(tmpx+40,tmpy+20,temp);
+			setfont(50,0,"微软雅黑");
 		}
 	}
 
@@ -165,7 +183,7 @@ void update_Motor() //todo  需要添加数量等更新
 						_OverTimeOrder++;
 					}
 				}
-				MotorVector[i].Map.pop();
+				MotorVector[i].Map.pop(); //当前目标点出栈 
 			}
 			else move_Motor(MotorVector[i]); //在过程中 更新位置 
 		}
@@ -175,12 +193,13 @@ void update_Motor() //todo  需要添加数量等更新
 	return;
 }
 
-void purchase_Motor() //completed
+void purchase_Motor() //购买骑手 
 {
-	_Money -= MotorPrice;
-	MotorVector[_MotorQuantity].number = _MotorQuantity;
-	MotorVector[_MotorQuantity].enable = true;
-	MotorVector[_MotorQuantity].Position = initPoint;
-	_MotorQuantity++;
+	_Money -= MotorPrice; //扣除费用 
+	MotorVector[_MotorQuantity].number = _MotorQuantity; //分配骑手序号 
+	MotorVector[_MotorQuantity].enable = true; //标记已购买 
+	MotorVector[_MotorQuantity].Position = initPoint; //移动至初始位置 
+	MotorVector[_MotorQuantity].color = (rand() * 65530) % 0xFFFFFF; //分配颜色用于绘制 
+	_MotorQuantity++; //全局骑手数增加 
 	return;
 }

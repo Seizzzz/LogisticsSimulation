@@ -2,29 +2,31 @@
 #define _MAIN_H
 
 #include <iostream>
+#include <stdlib.h> 
 #include <fstream>
 #include <cmath>
 #include <vector>
 #include <queue>
 #include <stack>
 #include <algorithm>
+#include <thread>
 
-#define initMoney 1000
-#define PreserveMoney 50
-#define Profit 10
-#define Punish 50
-#define TimeMaximum 60
-#define LimitTime 30
-#define MaxOrder 999
-#define MapSize 17
-#define Radius 10
-#define DelayTime 150
-#define MapLength 40
+#define initMoney 3000 //起始资金 
+#define PreserveMoney 50 //预留资金 
+#define Profit 10 //单笔利润 
+#define Punish 50 //单笔罚款 
+#define TimeMaximum 60 //最长时长 
+#define LimitTime 30 //限制时长 
+#define MaxOrder 999 //最大订单数 
+#define MapSize 17 //地图格数 
+#define Radius 10 //骑手标记半径 
+#define DelayTime 500 //更新间隔 
+#define MapLength 40 //单位格数像素数 
 #define MaxBurden 20 //即最多五组订单 
-#define MaxMotor 15
-#define MotorPrice 300
+#define MaxMotor 30 //最多骑手数 
+#define MotorPrice 300 //骑手价格 
 #define GetOrderLimit 3 //接单时间限制 
-#define INF 0x7fffffff
+#define INF 0x7fffffff //标准最大值 
 #define InputFileName  "sales.txt"
 #define OutputFileName "output.txt" 
 #define TestFileName "test.txt" 

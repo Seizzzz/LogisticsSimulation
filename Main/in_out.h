@@ -1,6 +1,6 @@
 #pragma once
 
-ostream& operator << (ostream& out, Motor& ex)
+ostream& operator << (ostream& out, Motor& ex) //重载<< 方便输出骑手信息 
 {
 	out << "第" << ex.number << "位骑手的位置: "
 		//<< "(" << (ex.Position.x >> 1) << "," << (ex.Position.y >> 1) << ")";
@@ -17,24 +17,24 @@ ostream& operator << (ostream& out, Motor& ex)
 	
 	return out;
 }
-ostream& operator << (ostream& out, const Data& ex)
+ostream& operator << (ostream& out, const Data& ex) //重载<< 方便输出订单信息
 {
 	out << ex.Number << " " << ex.OrderTime << " "
 		<< ex.Restaurant.x << " " << ex.Restaurant.y << " "
 		<< ex.Customer.x << " " << ex.Customer.y;
 	return out;
 }
-bool operator == (const Point& left, const Point& right)
+bool operator == (const Point& left, const Point& right) //重载== 判断同位置点 
 {
 	if (left.x == right.x && left.y == right.y) return true;
 	return false;
 }
-bool operator != (const Point & left, const Point & right)
+bool operator != (const Point & left, const Point & right) //重载== 判断同位置点 
 {
 	return !(left == right);
 }
 
-template<typename T> void reverse_Stack(stack<T> & s)
+template<typename T> void reverse_Stack(stack<T> & s) //翻转栈 
 {
 	stack<T> tmp1;
 	stack<T> tmp2;
@@ -56,7 +56,7 @@ template<typename T> void reverse_Stack(stack<T> & s)
 	return;
 }
 
-void output() //completed
+void output() //输出 
 {
 	//屏幕输出 
 	cout << "时间: " << _Time << endl;
@@ -106,7 +106,7 @@ void output() //completed
 	return;
 }
 
-void input_File()
+void input_File() //从文件输入 
 {
 	Data tmp;
 	while (infile >> tmp.Number) //输入
@@ -129,7 +129,7 @@ void input_File()
 	return;
 }
 
-void input_Keyboard()
+void input_Keyboard() //从键盘/控制台输入 
 {
 	Data tmp;
 	while (cin >> tmp.Number) //输入
@@ -152,14 +152,14 @@ void input_Keyboard()
 	return;
 }
 
-void init() //todo
+void init() //创建动画graph、全局变量等 
 {
-	initgraph(MapLength * MapSize + DealLength, MapLength * MapSize);
-	setbkcolor(EGERGB(0xFF, 0xFF, 0xFF));
-	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
+	initgraph(MapLength * MapSize + DealLength, MapLength * MapSize); //初始化graph大小 
+	setbkcolor(EGERGB(0xFF, 0xFF, 0xFF)); //设置背景色 
+	setfillcolor(EGERGB(0xFF, 0xFF, 0x0)); //设置填充色 
 	for (int x = 0; x < MapLength * MapSize; x += 2 * MapLength)
 		for (int y = 0; y < MapLength * MapSize; y += 2 * MapLength)
-			bar(x, y, x + MapLength, y + MapLength);
+			bar(x, y, x + MapLength, y + MapLength); //绘制地图 
 	
 	initPoint = Point{ 0,0 };
 	_Money = initMoney;
@@ -171,6 +171,9 @@ void init() //todo
 	initPoint.y /= _TotalOrder;
 	if (initPoint.x % 2) { if (initPoint.y % 2) initPoint.x++; } //x,y同为奇数 
 	else { if (initPoint.y % 2 == 0) initPoint.y++; } //x,y同为偶数 
+	
+	initPoint.x = 8; //动画版本默认初始位置 
+	initPoint.y = 9; //动画版本默认初始位置 
 
 	reverse_Stack(DataStack);
 	return;

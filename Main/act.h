@@ -1,7 +1,10 @@
 #pragma once
+#include <windows.h>
+#include <Mmsystem.h>
+#pragma comment(lib,"winmm.lib")
 
-char text_cus[] = "食客"; //临时存储 方便输出 
-char text_res[] = "餐馆";
+char text_cus[] = "餐馆"; //临时存储 方便输出 
+char text_res[] = "食客";
 
 bool judge_MotorMoving() //判断骑手移动 
 {
@@ -43,7 +46,7 @@ void move_Motor(Motor & who) //completed
 {
 	int i = (who.Map.top().x - who.Position.x > 0) ? 1 : -1, //单位向量 
 		j = (who.Map.top().y - who.Position.y > 0) ? 1 : -1;
-
+	
 	if (who.Map.top().x == who.Position.x)
 	{
 		if(who.Position.x == MapSize - 1) who.Position.x--;
@@ -58,15 +61,13 @@ void move_Motor(Motor & who) //completed
 	}
 	else
 	{
-		if (abs(who.Map.top().x - who.Position.x) > 1 && abs(who.Map.top().y - who.Position.y) > 1) //平凡位置
+		if (abs(who.Map.top().x - who.Position.x) >= 1 && abs(who.Map.top().y - who.Position.y) >= 1) //平凡位置
 		{
 			who.Position.x += i;
 			who.Position.y += j;
 		}
-		else if (abs(who.Map.top().x - who.Position.x) == 1) //行方向上到位
-			who.Position.y += 2 * j;
-		else if (abs(who.Map.top().y - who.Position.y) == 1) //列方向上到位
-			who.Position.x += 2 * i;
+		else if (abs(who.Map.top().x - who.Position.x) == 1) who.Position.y += 2 * j;//行方向上到位
+		else if (abs(who.Map.top().y - who.Position.y) == 1) who.Position.x += 2 * i;//列方向上到位
 	}
 
 	return;
@@ -112,6 +113,12 @@ bool judge_Arrive(Motor & ex) //completed
 	return false;
 }
 
+void play_Sound()
+{
+	PlaySound(TEXT("C:\\Users\\SLRYZD\\Desktop\\Github\\NP_Order\\Main\\m_money.wav"),NULL,SND_ASYNC);
+	return;
+}
+
 void update_Motor() //todo  需要添加数量等更新 
 {
 	/*
@@ -122,6 +129,12 @@ void update_Motor() //todo  需要添加数量等更新
 	return;
 	*/
 	cleardevice(); //清空当前动画内容 
+	
+	//打印背景
+	PIMAGE img;
+	img=newimage();
+	getimage(img,"p_back.jpg",0,0);
+	putimage(0, 0, img); 
 	
 	//打印地图 
 	setfillcolor(EGERGB(0xFF, 0xFF, 0x0));
@@ -141,11 +154,11 @@ void update_Motor() //todo  需要添加数量等更新
 	{
 		if(!MotorVector[i].Map.empty())
 		{
+			if(MotorVector[i].Map.top()==initPoint) continue; //如果是初始点 不显示信息 
+			
 			int tmpx = MapLength * MotorVector[i].Map.top().x,
 				tmpy = MapLength * MotorVector[i].Map.top().y;
 			bar(tmpx, tmpy, tmpx + MapLength, tmpy + MapLength);
-			
-			if(MotorVector[i].Map.top()==initPoint) continue; //如果是初始点 不显示信息 
 			
 			//对每个目标点 在其右输出相关信息 
 			setfont(20,0,"微软雅黑");
@@ -183,11 +196,22 @@ void update_Motor() //todo  需要添加数量等更新
 						_OverTimeOrder++;
 					}
 				}
+				else
+				{
+					if(MotorVector[i].Map.top() != initPoint)
+					{
+						thread playsnd(play_Sound);
+						playsnd.detach();
+					}
+				}
 				MotorVector[i].Map.pop(); //当前目标点出栈 
 			}
 			else move_Motor(MotorVector[i]); //在过程中 更新位置 
 		}
-		else if (MotorVector[i].Position != initPoint) MotorVector[i].Map.push(initPoint); //无目标 但不在起点 
+		else if (MotorVector[i].Position != initPoint) //无目标 但不在起点 
+		{
+			MotorVector[i].Map.push(initPoint);
+		}
 		//else 无目标 且在起点 忽略 
 	}
 	return;

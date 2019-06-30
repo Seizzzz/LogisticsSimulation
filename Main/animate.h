@@ -80,7 +80,7 @@ void ani_input()
 		tmp.Number = _TotalOrder + 600; //记录订单编号 
 		sprintf(temp,"已创建订单%d",tmp.Number); //通知完成订单创建 
 		outtextxy(MapLength * MapSize + 20, 600, temp);
-		Sleep(250); //用于观察 
+		Sleep(100); //用于观察 
 		setfont(50,0,"微软雅黑");
 		
 		++_TotalOrder;
